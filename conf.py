@@ -3,6 +3,7 @@ class Conf:
     server = 'irc.chat.twitch.tv'
     port = 6667
 
+
     # Bot account conf
     # Lowercase name
     nickname = ""
@@ -12,31 +13,36 @@ class Conf:
     # Run config
     # Lowercase channel to join.
     channel = ""
+    emote = ""
+
+
+
+    # Do you want to log all messages sent by the bot?
+    #logmessages = False #TODO Make this optional
+    logdir = "C:\\bots\\logs\\" + channel + "_" + nickname + ".txt" #Note this directory must exsist but the file doesnt have to
+
 
     # Add users to ignore, lowercase.
     ignoredUsers = [
-        "nightbot", "streamlabs"
+        "nightbot", "streamlabs", nickname
     ]
 
     # Add mods who can use commands, lowercase.
+    # Use Double quotes 
     mods = [
+           "mach2simulations"
     ]
 
     # THESE ARE WORDS THE BOT SHOULD NEVER LEARN.
-    # I FEEL DISGUSTING TYPING THEM.
-    # BUT BY THIS LIST EXISTING THEY WILL NOT PERPETUATE.
-    # Some are here to keep the bot from being political.
-    
-    # I didn't want to commit them to GitHub.
-    # Add your own, case insensitive.
     blacklisted_words = [
     ]
-
-    CMD_TOGGLE = "-neural"
-
+    nickname2 = "@" + nickname
+    CMD_MEN = "@Bot" #Calls Bot to force a message
+    CMD_WHAT = "-botinfo" #Posts link to github
+    CMD_TOGGLE = "-toggle" #Toggles bot off and on
     CMD_CLEAR = "-refreshing"
     CMD_WIPE = "-wipe"
-    CMD_SET_NUMBER = "-number"
+    CMD_SET_NUMBER = "-number" #how many chat messages before bot talks
     CMD_ALIVE = "-ping"
     CMD_UNIQUE = "-unique"
     CMD_EXIT = "-exit"

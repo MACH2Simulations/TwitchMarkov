@@ -6,20 +6,25 @@ import markovify
 import re
 import traceback
 
-GENERATE_ON = 35
+GENERATE_ON = 5
 CLEAR_LOGS_AFTER = False
 ALLOW_MENTIONS = True
 UNIQUE = True
 SEND_MESSAGES = True
-CULL_OVER = 8000
+CULL_OVER = 13131
 TIME_TO_CULL = datetime.timedelta(hours=1)
 
 messageCount = 0
 TIMES_TO_TRY = 1000
-PERCENT_UNIQUE_TO_SAVE = 50.0
+PERCENT_UNIQUE_TO_SAVE = 100
 STATE_SIZE = 2
 PHRASES_LIST = []
-LOGFILE = "uninitialized.txt"
+LOGFILE = "D:\\Bots\\LittleRedSM\\uninitialized.txt"
+
+
+q = open(Conf.logdir, "a", encoding="utf-8")
+q.write("Bot Wakes" + '\n')
+q.close()
 
 def listMeetsThresholdToSave(part, whole):
     global PERCENT_UNIQUE_TO_SAVE
@@ -88,8 +93,22 @@ def generateMessage():
         testMess = text_model.make_sentence(tries=TIMES_TO_TRY)
     if not (testMess is None):
         PHRASES_LIST.append(testMess)
+        #if Conf.logmessages == True:
+        ff = open(Conf.logdir, "a")
+        ff.write(str(testMess + '\n'))
+        ff.close()
+        print (testMess)
+        print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2)
     else:
         PHRASES_LIST = [testMess]
+        PHRASES_LIST.append(testMess)
+        #if Conf.logmessages == True:
+        ff = open(Conf.logdir, "a")
+        ff.write(str(testMess + '\n'))
+        ff.close()
+    
+        print (testMess)
+        print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2)
     return testMess
 
 def generateAndSendMessage(sock, channel):
@@ -118,7 +137,7 @@ def handleAdminMessage(username, channel, sock):
         if message == Conf.CMD_CLEAR:
             if CLEAR_LOGS_AFTER == True:
                 CLEAR_LOGS_AFTER = False
-                sendMaintenance(sock, channel, "No longer clearing memory after message! betch200IQ")
+                sendMaintenance(sock, channel, "No longer clearing memory after message!" + Conf.emote)
             else:
                 CLEAR_LOGS_AFTER = True
                 sendMaintenance(sock, channel, "Clearing memory after every message! FeelsDankMan")
@@ -162,7 +181,13 @@ def handleAdminMessage(username, channel, sock):
             return True
         # Check if alive.
         if message == Conf.CMD_ALIVE:
-            sendMaintenance(sock, channel, "Yeah, I'm alive and learning. betch2IQ")
+            sendMaintenance(sock, channel, "Yeah, I'm alive and learning." + Conf.emote)
+            return True
+        if message == Conf.CMD_WHAT:
+            sendMaintenance(sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov")
+            return True
+        if message == Conf.CMD_MEN:
+            generateAndSendMessage(sock, channel)
             return True
         # Kill
         if (username == channel or username == Conf.owner) and message == Conf.CMD_EXIT:
@@ -223,7 +248,7 @@ while True:
 
     LOGFILE = Conf.channel + "Logs.txt"
 
-    print("Connected", Conf.nickname, ".")
+    print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2, Conf.logdir)
 
     # Main loop
     while True:
