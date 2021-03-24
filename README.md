@@ -1,3 +1,7 @@
+This is Mach fork of https://github.com/metalgearsvt/TwitchMarkov
+These changes help with my usecase and could improve useabilty
+
+
 # TwitchMarkov
 A Markov chain generator for Twitch.
 
