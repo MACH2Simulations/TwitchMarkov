@@ -1,10 +1,24 @@
 from conf import Conf
 from emoji import demojize
+#from twython import Twython
 import datetime
 import socket
 import markovify
 import re
 import traceback
+#gettwittercrap
+#from conf import (
+#    consumer_key,
+#    consumer_secret,
+#    access_token,
+#    access_token_secret
+#)
+#twitter = Twython(
+#    consumer_key,
+#    consumer_secret,
+#    access_token,
+#    access_token_secret
+#)
 
 GENERATE_ON = 5
 CLEAR_LOGS_AFTER = False
@@ -19,7 +33,7 @@ TIMES_TO_TRY = 1000
 PERCENT_UNIQUE_TO_SAVE = 100
 STATE_SIZE = 2
 PHRASES_LIST = []
-LOGFILE = "D:\\Bots\\LittleRedSM\\uninitialized.txt"
+LOGFILE = "/uninitialized.txt"
 
 
 q = open(Conf.logdir, "a", encoding="utf-8")
@@ -98,6 +112,8 @@ def generateMessage():
         ff.write(str(testMess + '\n'))
         ff.close()
         print (testMess)
+#        twitter.update_status(status=testMess + " - A #Markov message from " +Conf.channel)
+#        print("Tweeted: %s" % testMess + " - A #Markov message from " +Conf.channel)
         print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2)
     else:
         PHRASES_LIST = [testMess]

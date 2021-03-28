@@ -1,3 +1,11 @@
+#Twitter OAUTHKeys
+#consumer_key        = ''
+#consumer_secret     = ''
+#access_token        = ''
+#access_token_secret = ''
+
+
+
 class Conf:
     # Hard conf
     server = 'irc.chat.twitch.tv'
