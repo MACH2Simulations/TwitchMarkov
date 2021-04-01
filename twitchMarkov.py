@@ -6,19 +6,19 @@ import socket
 import markovify
 import re
 import traceback
-#gettwittercrap
-#from conf import (
+# gettwittercrap
+# from conf import (
 #    consumer_key,
 #    consumer_secret,
 #    access_token,
 #    access_token_secret
-#)
-#twitter = Twython(
+# )
+# twitter = Twython(
 #    consumer_key,
 #    consumer_secret,
 #    access_token,
 #    access_token_secret
-#)
+# )
 
 GENERATE_ON = 5
 CLEAR_LOGS_AFTER = False
@@ -40,6 +40,7 @@ q = open(Conf.logdir, "a", encoding="utf-8")
 q.write("Bot Wakes" + '\n')
 q.close()
 
+
 def listMeetsThresholdToSave(part, whole):
     global PERCENT_UNIQUE_TO_SAVE
     pF = float(len(part))
@@ -49,11 +50,12 @@ def listMeetsThresholdToSave(part, whole):
     uniqueness = (pF/wF) * float(100)
     return (uniqueness >= PERCENT_UNIQUE_TO_SAVE)
 
+
 def filterMessage(message):
 
     if checkBlacklisted(message):
         return None
-    
+
     # Remove links
     # TODO: Fix
     message = re.sub(r"http\S+", "", message)
@@ -74,6 +76,7 @@ def filterMessage(message):
     message = message.strip()
     return message
 
+
 def writeMessage(message):
     global CLEAR_LOGS_AFTER
     global LOGFILE
@@ -87,6 +90,7 @@ def writeMessage(message):
         f.close()
         return True
     return False
+
 
 def generateMessage():
     global LOGFILE
@@ -107,25 +111,28 @@ def generateMessage():
         testMess = text_model.make_sentence(tries=TIMES_TO_TRY)
     if not (testMess is None):
         PHRASES_LIST.append(testMess)
-        #if Conf.logmessages == True:
+        # if Conf.logmessages == True:
         ff = open(Conf.logdir, "a")
         ff.write(str(testMess + '\n'))
         ff.close()
-        print (testMess)
+        print(testMess)
 #        twitter.update_status(status=testMess + " - A #Markov message from " +Conf.channel)
 #        print("Tweeted: %s" % testMess + " - A #Markov message from " +Conf.channel)
-        print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2)
+        print("Connected", "|", Conf.nickname,
+              "|", Conf.channel, Conf.nickname2)
     else:
         PHRASES_LIST = [testMess]
         PHRASES_LIST.append(testMess)
-        #if Conf.logmessages == True:
+        # if Conf.logmessages == True:
         ff = open(Conf.logdir, "a")
         ff.write(str(testMess + '\n'))
         ff.close()
-    
-        print (testMess)
-        print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2)
+
+        print(testMess)
+        print("Connected", "|", Conf.nickname,
+              "|", Conf.channel, Conf.nickname2)
     return testMess
+
 
 def generateAndSendMessage(sock, channel):
     if SEND_MESSAGES:
@@ -135,12 +142,17 @@ def generateAndSendMessage(sock, channel):
         else:
             print("Could not generate.")
 
+
 def sendMessage(sock, channel, message):
     if SEND_MESSAGES:
-        sock.send("PRIVMSG #{} :{}\r\n".format(channel, message).encode("utf-8"))
+        sock.send("PRIVMSG #{} :{}\r\n".format(
+            channel, message).encode("utf-8"))
+
 
 def sendMaintenance(sock, channel, message):
-    sock.send("PRIVMSG #{} :{}\r\n".format(channel, Conf.SELF_PREFIX + message).encode("utf-8"))
+    sock.send("PRIVMSG #{} :{}\r\n".format(
+        channel, Conf.SELF_PREFIX + message).encode("utf-8"))
+
 
 def handleAdminMessage(username, channel, sock):
     global CLEAR_LOGS_AFTER
@@ -153,10 +165,12 @@ def handleAdminMessage(username, channel, sock):
         if message == Conf.CMD_CLEAR:
             if CLEAR_LOGS_AFTER == True:
                 CLEAR_LOGS_AFTER = False
-                sendMaintenance(sock, channel, "No longer clearing memory after message!" + Conf.emote)
+                sendMaintenance(
+                    sock, channel, "No longer clearing memory after message!" + Conf.emote)
             else:
                 CLEAR_LOGS_AFTER = True
-                sendMaintenance(sock, channel, "Clearing memory after every message! FeelsDankMan")
+                sendMaintenance(
+                    sock, channel, "Clearing memory after every message! FeelsDankMan")
             return True
         # Wipe logs
         if message == Conf.CMD_WIPE:
@@ -168,19 +182,23 @@ def handleAdminMessage(username, channel, sock):
         if message == Conf.CMD_TOGGLE:
             if SEND_MESSAGES:
                 SEND_MESSAGES = False
-                sendMaintenance(sock, channel, "Messages will no longer be sent! D:")
+                sendMaintenance(
+                    sock, channel, "Messages will no longer be sent! D:")
             else:
                 SEND_MESSAGES = True
-                sendMaintenance(sock, channel, "Messages are now turned on! :)")
+                sendMaintenance(
+                    sock, channel, "Messages are now turned on! :)")
             return True
         # Toggle functionality
         if message == Conf.CMD_UNIQUE:
             if UNIQUE:
                 UNIQUE = False
-                sendMaintenance(sock, channel, "Messages will no longer be unique. PogO")
+                sendMaintenance(
+                    sock, channel, "Messages will no longer be unique. PogO")
             else:
                 UNIQUE = True
-                sendMaintenance(sock, channel, "Messages will now be unique. PogU")
+                sendMaintenance(
+                    sock, channel, "Messages will now be unique. PogU")
             return True
         # Generate message on how many numbers.
         if message.split()[0] == Conf.CMD_SET_NUMBER:
@@ -191,16 +209,20 @@ def handleAdminMessage(username, channel, sock):
                     if num <= 0:
                         raise Exception
                     GENERATE_ON = num
-                    sendMaintenance(sock, channel, "Messages will now be sent after " + GENERATE_ON + " chat messages. DankG")
+                    sendMaintenance(
+                        sock, channel, "Messages will now be sent after " + GENERATE_ON + " chat messages. DankG")
             except:
-                    sendMaintenance(sock, channel, "Current value: " + str(GENERATE_ON) + ". To set, use: " + str(Conf.CMD_SET_NUMBER) + " [number of messages]")
+                sendMaintenance(sock, channel, "Current value: " + str(GENERATE_ON) +
+                                ". To set, use: " + str(Conf.CMD_SET_NUMBER) + " [number of messages]")
             return True
         # Check if alive.
         if message == Conf.CMD_ALIVE:
-            sendMaintenance(sock, channel, "Yeah, I'm alive and learning." + Conf.emote)
+            sendMaintenance(
+                sock, channel, "Yeah, I'm alive and learning." + Conf.emote)
             return True
         if message == Conf.CMD_WHAT:
-            sendMaintenance(sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov")
+            sendMaintenance(
+                sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov")
             return True
         if message == Conf.CMD_MEN:
             generateAndSendMessage(sock, channel)
@@ -211,25 +233,28 @@ def handleAdminMessage(username, channel, sock):
             exit()
     return False
 
+
 def isUserIgnored(username):
     if (username in Conf.ignoredUsers):
         return True
     return False
 
+
 def cullFile():
     fin = open(LOGFILE, "r", encoding="utf-8")
     data_list = fin.readlines()
     fin.close()
-    
+
     size = len(data_list)
     if size <= CULL_OVER:
         return
     size_delete = size // 2
     del data_list[0:size_delete]
-    
+
     fout = open(LOGFILE, "w", encoding="utf-8")
     fout.writelines(data_list)
     fout.close()
+
 
 def checkBlacklisted(message):
     # Check words that the bot should NEVER learn.
@@ -237,6 +262,7 @@ def checkBlacklisted(message):
         if re.search(r"\b" + i, message, re.IGNORECASE):
             return True
     return False
+
 
 def shouldCull(last_cull):
     now_time = datetime.datetime.now()
@@ -247,6 +273,7 @@ def shouldCull(last_cull):
     return last_cull
 
 # PROGRAM HERE
+
 
 last_cull = datetime.datetime.now()
 
@@ -264,7 +291,8 @@ while True:
 
     LOGFILE = Conf.channel + "Logs.txt"
 
-    print ("Connected","|",Conf.nickname,"|", Conf.channel, Conf.nickname2, Conf.logdir)
+    print("Connected", "|", Conf.nickname, "|",
+          Conf.channel, Conf.nickname2, Conf.logdir)
 
     # Main loop
     while True:
@@ -280,7 +308,8 @@ while True:
                 try:
                     msg = demojize(resp)
                     # Break out username / channel / message.
-                    regex = re.search(r':(.*)\!.*@.*\.tmi\.twitch\.tv PRIVMSG #(.*) :(.*)', msg)
+                    regex = re.search(
+                        r':(.*)\!.*@.*\.tmi\.twitch\.tv PRIVMSG #(.*) :(.*)', msg)
                     # If we have a matching message, do something.
                     if regex != None:
                         # The variables we need.
@@ -311,10 +340,10 @@ while True:
                             messageCount = 0
                 except Exception as e:
                     print("Inner")
-                    traceback.print_exc() 
+                    traceback.print_exc()
                     print(e)
         except Exception as e:
             print("Outer")
-            traceback.print_exc() 
+            traceback.print_exc()
             print(e)
             break
