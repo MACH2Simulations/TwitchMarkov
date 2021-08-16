@@ -206,7 +206,7 @@ def handleAdminMessage(username, channel, sock):
             generateAndSendMessage(sock, channel)
             return True
         # Kill
-        if (username == channel or username == Conf.owner) and message == Conf.CMD_EXIT:
+        if (username == channel or username == Conf.owner or username == Conf.mods) and message == Conf.CMD_EXIT:
             sendMaintenance(sock, channel, "You have killed me. D:")
             exit()
     return False
