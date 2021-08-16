@@ -98,30 +98,17 @@ def checkBlacklisted(message):
     for i in Global_Banned.Global_Banned_Words:
         if re.search(r"\b" + i, message, re.IGNORECASE):
             return True
+        
+        
+    
+    
+    
+
     return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 q = open(Conf.logdir, "a", encoding="utf-8")
 q.write("Bot Wakes" + '\n')
 q.close()
-
-
-
-
 
 
 
@@ -136,6 +123,13 @@ def listMeetsThresholdToSave(part, whole):
 
 
 def filterMessage(message):
+    '''
+    Input: A string
+    Output: A string
+    Use: Checks if a message in banned, if not removes stuff like mentions 
+    Returns: Nothing or a cleaned message
+    
+    '''
 
     if checkBlacklisted(message):
         return None
