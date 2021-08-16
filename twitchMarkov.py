@@ -1,23 +1,23 @@
+import traceback
+import re
+import markovify
+import socket
+import datetime
+from Global_Authed_Users import Global_Authed_Users
+from Global_Banned_Conf import Global_Banned
 from conf import Conf
 from emoji import demojize
 import sys
 sys.path.append(Conf.Global_Banned_Path)
-from Global_Banned_Conf import Global_Banned
 sys.path.append(Conf.Global_Authed_Path)
-from Global_Authed_Users import Global_Authed_Users
-import datetime
-import socket
-import markovify
-import re
-import traceback
-#Removed Twitter
+# Removed Twitter
 
 GENERATE_ON = Conf.Gen_Message_On
 CLEAR_LOGS_AFTER = Conf.CLEAR_LOGS_AFTER
 ALLOW_MENTIONS = Conf.ALLOW_MENTIONS
 UNIQUE = Conf.UNIQUE
 SEND_MESSAGES = Conf.SEND_MESSAGES
-CULL_OVER = Conf.CULL_OVER 
+CULL_OVER = Conf.CULL_OVER
 TIME_TO_CULL = datetime.timedelta(hours=1)
 
 messageCount = 0
@@ -26,7 +26,6 @@ PERCENT_UNIQUE_TO_SAVE = Conf.PERCENT_UNIQUE_TO_SAVE
 STATE_SIZE = Conf.STATE_SIZE
 PHRASES_LIST = []
 LOGFILE = "/uninitialized.txt"
-
 
 
 def Authed_User(Username):
@@ -43,10 +42,12 @@ def Authed_User(Username):
     elif Username == Conf.channel:
         return True
     elif Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth == True:
-        return True 
+        return True
     else:
         return False
     return False
+
+
 def Super_User(Username):
     '''
     Input: A lowercase string containing the username:
@@ -54,7 +55,7 @@ def Super_User(Username):
     Use: This Alllows you to check if a user is allowed to use SuperUser Commands (Wipe and Kill)
     Returns: True if Authorised User, Else False
     '''
-    
+
     if Username == Conf.owner:
         return True
     elif Username == Conf.channel:
@@ -85,6 +86,7 @@ def isUserIgnored(username):
         return False
     return False
 
+
 def checkBlacklisted(message):
     '''
     Input: A Message in any case
@@ -101,8 +103,7 @@ def checkBlacklisted(message):
     return False
 
 
-
-def sendMessage(sock, channel, message,isadmin):
+def sendMessage(sock, channel, message, isadmin):
     '''
 
     Parameters
@@ -118,21 +119,19 @@ def sendMessage(sock, channel, message,isadmin):
     None.
 
     '''
-    
-    
+
     if isadmin == False:
         if SEND_MESSAGES:
             sock.send("PRIVMSG #{} :{}\r\n".format(
-            channel, message).encode("utf-8"))
+                channel, message).encode("utf-8"))
     else:
         sock.send("PRIVMSG #{} :{}\r\n".format(
-        channel, Conf.SELF_PREFIX + message).encode("utf-8"))
+            channel, Conf.SELF_PREFIX + message).encode("utf-8"))
 
 
 q = open(Conf.logdir, "a", encoding="utf-8")
 q.write("Bot Wakes" + '\n')
 q.close()
-
 
 
 def listMeetsThresholdToSave(part, whole):
@@ -151,7 +150,7 @@ def filterMessage(message):
     Output: A string
     Use: Checks if a message in banned, if not removes stuff like mentions 
     Returns: Nothing or a cleaned message
-    
+
     '''
 
     if checkBlacklisted(message):
@@ -238,12 +237,9 @@ def generateAndSendMessage(sock, channel):
     if SEND_MESSAGES:
         markoved = generateMessage()
         if markoved != None:
-            sendMessage(sock, channel, markoved,False)
+            sendMessage(sock, channel, markoved, False)
         else:
             print("Could not generate.")
-
-
-
 
 
 def handleAdminMessage(username, channel, sock):
@@ -262,35 +258,35 @@ def handleAdminMessage(username, channel, sock):
             else:
                 CLEAR_LOGS_AFTER = True
                 sendMessage(
-                    sock, channel, "Clearing memory after every message! FeelsDankMan",True)
+                    sock, channel, "Clearing memory after every message! FeelsDankMan", True)
             return True
         # Wipe logs
         if message == Conf.CMD_WIPE:
             f = open(LOGFILE, "w", encoding="utf-8")
             f.close()
-            sendMessage(sock, channel, "Wiped memory banks. D:",True)
+            sendMessage(sock, channel, "Wiped memory banks. D:", True)
             return True
         # Toggle functionality
         if message == Conf.CMD_TOGGLE:
             if SEND_MESSAGES:
                 SEND_MESSAGES = False
                 sendMessage(
-                    sock, channel, "Messages will no longer be sent! D:",True)
+                    sock, channel, "Messages will no longer be sent! D:", True)
             else:
                 SEND_MESSAGES = True
                 sendMessage(
-                    sock, channel, "Messages are now turned on! :)",True)
+                    sock, channel, "Messages are now turned on! :)", True)
             return True
         # Toggle functionality
         if message == Conf.CMD_UNIQUE:
             if UNIQUE:
                 UNIQUE = False
                 sendMessage(
-                    sock, channel, "Messages will no longer be unique. PogO",True)
+                    sock, channel, "Messages will no longer be unique. PogO", True)
             else:
                 UNIQUE = True
                 sendMessage(
-                    sock, channel, "Messages will now be unique. PogU",True)
+                    sock, channel, "Messages will now be unique. PogU", True)
             return True
         # Generate message on how many numbers.
         if message.split()[0] == Conf.CMD_SET_NUMBER:
@@ -302,31 +298,28 @@ def handleAdminMessage(username, channel, sock):
                         raise Exception
                     GENERATE_ON = num
                     sendMessage(
-                        sock, channel, "Messages will now be sent after " + GENERATE_ON + " chat messages. DankG",True)
+                        sock, channel, "Messages will now be sent after " + GENERATE_ON + " chat messages. DankG", True)
             except:
                 sendMessage(sock, channel, "Current value: " + str(GENERATE_ON) +
-                                ". To set, use: " + str(Conf.CMD_SET_NUMBER) + " [number of messages]",True)
+                            ". To set, use: " + str(Conf.CMD_SET_NUMBER) + " [number of messages]", True)
             return True
         # Check if alive.
         if message == Conf.CMD_ALIVE:
             sendMessage(
-                sock, channel, "Yeah, I'm alive and learning." + Conf.emote,True)
+                sock, channel, "Yeah, I'm alive and learning." + Conf.emote, True)
             return True
         if message == Conf.CMD_WHAT:
             sendMessage(
-                sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov",True)
+                sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov", True)
             return True
         if message == Conf.CMD_MEN:
             generateAndSendMessage(sock, channel)
             return True
         # Kill
         if Super_User(username) and message == Conf.CMD_EXIT:
-            sendMessage(sock, channel, "You have killed me. D:",True)
+            sendMessage(sock, channel, "You have killed me. D:", True)
             exit()
     return False
-
-
-
 
 
 def cullFile():
@@ -343,8 +336,6 @@ def cullFile():
     fout = open(LOGFILE, "w", encoding="utf-8")
     fout.writelines(data_list)
     fout.close()
-
-
 
 
 def shouldCull(last_cull):
