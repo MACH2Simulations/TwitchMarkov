@@ -98,13 +98,36 @@ def checkBlacklisted(message):
     for i in Global_Banned.Global_Banned_Words:
         if re.search(r"\b" + i, message, re.IGNORECASE):
             return True
-        
-        
-    
-    
-    
-
     return False
+
+
+
+def sendMessage(sock, channel, message,isadmin):
+    '''
+
+    Parameters
+    ----------
+    channel : String
+        A Channel Name in lowercase
+    message : String
+        a message
+    isadmin : Boolean
+        Is this an admin message
+    Returns
+    -------
+    None.
+
+    '''
+    
+    
+    if isadmin == False:
+        if SEND_MESSAGES:
+            sock.send("PRIVMSG #{} :{}\r\n".format(
+            channel, message).encode("utf-8"))
+    else:
+        sock.send("PRIVMSG #{} :{}\r\n".format(
+        channel, Conf.SELF_PREFIX + message).encode("utf-8"))
+
 
 q = open(Conf.logdir, "a", encoding="utf-8")
 q.write("Bot Wakes" + '\n')
@@ -215,20 +238,12 @@ def generateAndSendMessage(sock, channel):
     if SEND_MESSAGES:
         markoved = generateMessage()
         if markoved != None:
-            sendMessage(sock, channel, markoved)
+            sendMessage(sock, channel, markoved,False)
         else:
             print("Could not generate.")
 
 
-def sendMessage(sock, channel, message):
-    if SEND_MESSAGES:
-        sock.send("PRIVMSG #{} :{}\r\n".format(
-            channel, message).encode("utf-8"))
 
-
-def sendMaintenance(sock, channel, message):
-    sock.send("PRIVMSG #{} :{}\r\n".format(
-        channel, Conf.SELF_PREFIX + message).encode("utf-8"))
 
 
 def handleAdminMessage(username, channel, sock):
@@ -242,40 +257,40 @@ def handleAdminMessage(username, channel, sock):
         if message == Conf.CMD_CLEAR:
             if CLEAR_LOGS_AFTER == True:
                 CLEAR_LOGS_AFTER = False
-                sendMaintenance(
-                    sock, channel, "No longer clearing memory after message!" + Conf.emote)
+                sendMessage(
+                    sock, channel, "No longer clearing memory after message!" + Conf.emote, True)
             else:
                 CLEAR_LOGS_AFTER = True
-                sendMaintenance(
-                    sock, channel, "Clearing memory after every message! FeelsDankMan")
+                sendMessage(
+                    sock, channel, "Clearing memory after every message! FeelsDankMan",True)
             return True
         # Wipe logs
         if message == Conf.CMD_WIPE:
             f = open(LOGFILE, "w", encoding="utf-8")
             f.close()
-            sendMaintenance(sock, channel, "Wiped memory banks. D:")
+            sendMessage(sock, channel, "Wiped memory banks. D:",True)
             return True
         # Toggle functionality
         if message == Conf.CMD_TOGGLE:
             if SEND_MESSAGES:
                 SEND_MESSAGES = False
-                sendMaintenance(
-                    sock, channel, "Messages will no longer be sent! D:")
+                sendMessage(
+                    sock, channel, "Messages will no longer be sent! D:",True)
             else:
                 SEND_MESSAGES = True
-                sendMaintenance(
-                    sock, channel, "Messages are now turned on! :)")
+                sendMessage(
+                    sock, channel, "Messages are now turned on! :)",True)
             return True
         # Toggle functionality
         if message == Conf.CMD_UNIQUE:
             if UNIQUE:
                 UNIQUE = False
-                sendMaintenance(
-                    sock, channel, "Messages will no longer be unique. PogO")
+                sendMessage(
+                    sock, channel, "Messages will no longer be unique. PogO",True)
             else:
                 UNIQUE = True
-                sendMaintenance(
-                    sock, channel, "Messages will now be unique. PogU")
+                sendMessage(
+                    sock, channel, "Messages will now be unique. PogU",True)
             return True
         # Generate message on how many numbers.
         if message.split()[0] == Conf.CMD_SET_NUMBER:
@@ -286,27 +301,27 @@ def handleAdminMessage(username, channel, sock):
                     if num <= 0:
                         raise Exception
                     GENERATE_ON = num
-                    sendMaintenance(
-                        sock, channel, "Messages will now be sent after " + GENERATE_ON + " chat messages. DankG")
+                    sendMessage(
+                        sock, channel, "Messages will now be sent after " + GENERATE_ON + " chat messages. DankG",True)
             except:
-                sendMaintenance(sock, channel, "Current value: " + str(GENERATE_ON) +
-                                ". To set, use: " + str(Conf.CMD_SET_NUMBER) + " [number of messages]")
+                sendMessage(sock, channel, "Current value: " + str(GENERATE_ON) +
+                                ". To set, use: " + str(Conf.CMD_SET_NUMBER) + " [number of messages]",True)
             return True
         # Check if alive.
         if message == Conf.CMD_ALIVE:
-            sendMaintenance(
-                sock, channel, "Yeah, I'm alive and learning." + Conf.emote)
+            sendMessage(
+                sock, channel, "Yeah, I'm alive and learning." + Conf.emote,True)
             return True
         if message == Conf.CMD_WHAT:
-            sendMaintenance(
-                sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov")
+            sendMessage(
+                sock, channel, "This bot is taken from here https://github.com/MACH2Simulations/TwitchMarkov",True)
             return True
         if message == Conf.CMD_MEN:
             generateAndSendMessage(sock, channel)
             return True
         # Kill
         if Super_User(username) and message == Conf.CMD_EXIT:
-            sendMaintenance(sock, channel, "You have killed me. D:")
+            sendMessage(sock, channel, "You have killed me. D:",True)
             exit()
     return False
 

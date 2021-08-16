@@ -43,18 +43,6 @@ class Conf():
             'bits'
         ]
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         nickname2 = "@" + nickname
         CMD_MEN = "@Bot"  # Calls Bot to force a message
         CMD_WHAT = "-botinfo"  # Posts link to github
