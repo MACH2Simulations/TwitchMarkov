@@ -1,44 +1,100 @@
 from conf import Conf
 from emoji import demojize
-#from twython import Twython
+import sys
+sys.path.append(Conf.Global_Banned_Path)
+from Global_Banned_Conf import Global_Banned
+sys.path.append(Conf.Global_Authed_Path)
+from Global_Authed_Users import Global_Authed_Users
 import datetime
 import socket
 import markovify
 import re
 import traceback
-# gettwittercrap
-# from conf import (
-#    consumer_key,
-#    consumer_secret,
-#    access_token,
-#    access_token_secret
-# )
-# twitter = Twython(
-#    consumer_key,
-#    consumer_secret,
-#    access_token,
-#    access_token_secret
-# )
+#Removed Twitter
 
-GENERATE_ON = 5
-CLEAR_LOGS_AFTER = False
-ALLOW_MENTIONS = True
-UNIQUE = True
-SEND_MESSAGES = True
-CULL_OVER = 13131
+GENERATE_ON = Conf.Gen_Message_On
+CLEAR_LOGS_AFTER = Conf.CLEAR_LOGS_AFTER
+ALLOW_MENTIONS = Conf.ALLOW_MENTIONS
+UNIQUE = Conf.UNIQUE
+SEND_MESSAGES = Conf.SEND_MESSAGES
+CULL_OVER = Conf.CULL_OVER 
 TIME_TO_CULL = datetime.timedelta(hours=1)
 
 messageCount = 0
-TIMES_TO_TRY = 1000
-PERCENT_UNIQUE_TO_SAVE = 100
-STATE_SIZE = 2
+TIMES_TO_TRY = Conf.TIMES_TO_TRY
+PERCENT_UNIQUE_TO_SAVE = Conf.PERCENT_UNIQUE_TO_SAVE
+STATE_SIZE = Conf.STATE_SIZE
 PHRASES_LIST = []
 LOGFILE = "/uninitialized.txt"
+
+
+
+def Authed_User(Username):
+    '''
+    input: A lowercase string
+    output: True or False
+    Use Checks if a username can use commands
+    '''
+    if Username == Conf.owner:
+        return True
+    elif Username in Conf.mods:
+        return True
+    elif Username == Conf.channel:
+        return True
+    elif Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth == True:
+        return True 
+    else:
+        return False
+def Super_User(Username):
+    '''
+    input: A lowercase string
+    output: True or False
+    Use Checks if a username can user super commands (Wipe and Kill)
+    '''
+    
+    if Username == Conf.owner:
+        return True
+    elif Username == Conf.channel:
+        return True
+    elif Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth == True:
+        return True
+    else:
+        return False
+
+def isUserIgnored(username):
+    if (username in Conf.ignoredUsers):
+        return True
+    return False
+def checkBlacklisted(message):
+    # Check words that the bot should NEVER learn.
+    for i in Conf.blacklisted_words:
+        if re.search(r"\b" + i, message, re.IGNORECASE):
+            return True
+    return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 q = open(Conf.logdir, "a", encoding="utf-8")
 q.write("Bot Wakes" + '\n')
 q.close()
+
+
+
+
+
 
 
 def listMeetsThresholdToSave(part, whole):
@@ -116,8 +172,7 @@ def generateMessage():
         ff.write(str(testMess + '\n'))
         ff.close()
         print(testMess)
-#        twitter.update_status(status=testMess + " - A #Markov message from " +Conf.channel)
-#        print("Tweeted: %s" % testMess + " - A #Markov message from " +Conf.channel)
+
         print("Connected", "|", Conf.nickname,
               "|", Conf.channel, Conf.nickname2)
     else:
@@ -160,7 +215,7 @@ def handleAdminMessage(username, channel, sock):
     global SEND_MESSAGES
     global GENERATE_ON
     global UNIQUE
-    if username == channel or username == Conf.owner or username in Conf.mods:
+    if Authed_User(username):
         # Log clearing after message.
         if message == Conf.CMD_CLEAR:
             if CLEAR_LOGS_AFTER == True:
@@ -228,16 +283,13 @@ def handleAdminMessage(username, channel, sock):
             generateAndSendMessage(sock, channel)
             return True
         # Kill
-        if (username == channel or username == Conf.owner or username == Conf.mods) and message == Conf.CMD_EXIT:
+        if Super_User(username) and message == Conf.CMD_EXIT:
             sendMaintenance(sock, channel, "You have killed me. D:")
             exit()
     return False
 
 
-def isUserIgnored(username):
-    if (username in Conf.ignoredUsers):
-        return True
-    return False
+
 
 
 def cullFile():
@@ -256,12 +308,6 @@ def cullFile():
     fout.close()
 
 
-def checkBlacklisted(message):
-    # Check words that the bot should NEVER learn.
-    for i in Conf.blacklisted_words:
-        if re.search(r"\b" + i, message, re.IGNORECASE):
-            return True
-    return False
 
 
 def shouldCull(last_cull):
