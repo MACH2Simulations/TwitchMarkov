@@ -32,10 +32,14 @@ with open(Conf.logdir, "a", encoding="utf-8")as q:
     q.write("Bot Wakes" + '\n')
 
 
-
 def SysPrint():
-    print("Connected", "|", Conf.nickname,
-              "|", Conf.channel, Conf.nickname2)
+    '''
+    Returns 
+    -------
+    Connection Information,used to know which channel each windows is connected to
+    As: Conncted | BotName | Channel Name @BotName LogDIR
+    '''
+    print("Connected", "|", Conf.nickname,"|", Conf.channel, Conf.nickname2)
 
 
 def Authed_User(Username):
@@ -53,7 +57,7 @@ def Authed_User(Username):
         return True
     if Username in Global_Authed_Users.Global_Authed_Users:
         if Conf.Allows_Global_Auth is True:
-            return True 
+            return True
     return False
 
 
@@ -136,10 +140,8 @@ def sendMessage(sock, channel, message,isadmin):
     else:
         sock.send("PRIVMSG #{} :{}\r\n".format(
         channel, Conf.SELF_PREFIX + message).encode("utf-8"))
-
-
-
-
+        
+        
 def listMeetsThresholdToSave(part, whole):
     global PERCENT_UNIQUE_TO_SAVE
     pF = float(len(part))
@@ -187,7 +189,7 @@ def writeMessage(message):
     global CLEAR_LOGS_AFTER
     global LOGFILE
     message = filterMessage(message)
-    #if message != None and message != "":  ## Linter is shouting at me
+    # if message != None and message != "":  ## Linter is shouting at me
     if message.len() > 1:
         if messageCount == 0 and CLEAR_LOGS_AFTER:
             f = open(LOGFILE, "w", encoding="utf-8")
@@ -223,7 +225,6 @@ def generateMessage():
             file_ob.write(testMess + '\n')
             print(testMess)
         SysPrint()
-        
     else:
         PHRASES_LIST = [testMess]
         PHRASES_LIST.append(testMess)
