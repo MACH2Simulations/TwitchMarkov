@@ -38,14 +38,14 @@ def Authed_User(Username):
     '''
     if Username == Conf.owner:
         return True
-    elif Username in Conf.mods:
+    if Username in Conf.mods:
         return True
-    elif Username == Conf.channel:
+    if Username == Conf.channel:
         return True
-    elif Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth == True:
+    if Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth is True:
         return True 
-    else:
-        return False
+  
+    
     return False
 def Super_User(Username):
     '''
@@ -57,12 +57,11 @@ def Super_User(Username):
     
     if Username == Conf.owner:
         return True
-    elif Username == Conf.channel:
+    if Username == Conf.channel:
         return True
-    elif Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth == True:
+    if Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth is True:
         return True
-    else:
-        return False
+  
     return False
 
 
@@ -75,14 +74,13 @@ def isUserIgnored(username):
     '''
     if username in Conf.ignoredUsers:
         return True
-    elif username in Global_Banned.Global_Banned_Users:
+    if username in Global_Banned.Global_Banned_Users:
         return True
-    elif username == Conf.nickname:
+    if username == Conf.nickname:
         return True
-    elif username == Conf.channel:
+    if username == Conf.channel:
         return True
-    else:
-        return False
+    
     return False
 
 def checkBlacklisted(message):
@@ -120,7 +118,7 @@ def sendMessage(sock, channel, message,isadmin):
     '''
     
     
-    if isadmin == False:
+    if isadmin is False:
         if SEND_MESSAGES:
             sock.send("PRIVMSG #{} :{}\r\n".format(
             channel, message).encode("utf-8"))
@@ -162,7 +160,7 @@ def filterMessage(message):
     message = re.sub(r"http\S+", "", message)
 
     # Remove mentions
-    if ALLOW_MENTIONS == False:
+    if ALLOW_MENTIONS is False:
         message = re.sub(r"@\S+", "", message)
 
     # Remove just repeated messages.
@@ -322,7 +320,7 @@ def handleAdminMessage(username, channel, sock):
         # Kill
         if Super_User(username) and message == Conf.CMD_EXIT:
             sendMessage(sock, channel, "You have killed me. D:",True)
-            exit()
+            sys.exit() ##Deeposoure says to use this over exit()
     return False
 
 
