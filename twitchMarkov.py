@@ -1,23 +1,23 @@
+import traceback
+import re
+import markovify
+import socket
+import datetime
+from Global_Authed_Users import Global_Authed_Users
+from Global_Banned_Conf import Global_Banned
 from conf import Conf
 from emoji import demojize
 import sys
 sys.path.append(Conf.Global_Banned_Path)
-from Global_Banned_Conf import Global_Banned
 sys.path.append(Conf.Global_Authed_Path)
-from Global_Authed_Users import Global_Authed_Users
-import datetime
-import socket
-import markovify
-import re
-import traceback
-#Removed Twitter
+# Removed Twitter
 
 GENERATE_ON = Conf.Gen_Message_On
 CLEAR_LOGS_AFTER = Conf.CLEAR_LOGS_AFTER
 ALLOW_MENTIONS = Conf.ALLOW_MENTIONS
 UNIQUE = Conf.UNIQUE
 SEND_MESSAGES = Conf.SEND_MESSAGES
-CULL_OVER = Conf.CULL_OVER 
+CULL_OVER = Conf.CULL_OVER
 TIME_TO_CULL = datetime.timedelta(hours=1)
 
 messageCount = 0
@@ -26,7 +26,6 @@ PERCENT_UNIQUE_TO_SAVE = Conf.PERCENT_UNIQUE_TO_SAVE
 STATE_SIZE = Conf.STATE_SIZE
 PHRASES_LIST = []
 LOGFILE = "/uninitialized.txt"
-
 
 
 def Authed_User(Username):
@@ -43,10 +42,12 @@ def Authed_User(Username):
     elif Username == Conf.channel:
         return True
     elif Username in Global_Authed_Users.Global_Authed_Users and Conf.Allows_Global_Auth == True:
-        return True 
+        return True
     else:
         return False
     return False
+
+
 def Super_User(Username):
     '''
     Input: A lowercase string containing the username:
@@ -54,7 +55,7 @@ def Super_User(Username):
     Use: This Alllows you to check if a user is allowed to use SuperUser Commands (Wipe and Kill)
     Returns: True if Authorised User, Else False
     '''
-    
+
     if Username == Conf.owner:
         return True
     elif Username == Conf.channel:
@@ -85,6 +86,7 @@ def isUserIgnored(username):
         return False
     return False
 
+
 def checkBlacklisted(message):
     '''
     Input: A Message in any case
@@ -98,18 +100,13 @@ def checkBlacklisted(message):
     for i in Global_Banned.Global_Banned_Words:
         if re.search(r"\b" + i, message, re.IGNORECASE):
             return True
-        
-        
-    
-    
-    
 
     return False
+
 
 q = open(Conf.logdir, "a", encoding="utf-8")
 q.write("Bot Wakes" + '\n')
 q.close()
-
 
 
 def listMeetsThresholdToSave(part, whole):
@@ -128,7 +125,7 @@ def filterMessage(message):
     Output: A string
     Use: Checks if a message in banned, if not removes stuff like mentions 
     Returns: Nothing or a cleaned message
-    
+
     '''
 
     if checkBlacklisted(message):
@@ -311,9 +308,6 @@ def handleAdminMessage(username, channel, sock):
     return False
 
 
-
-
-
 def cullFile():
     fin = open(LOGFILE, "r", encoding="utf-8")
     data_list = fin.readlines()
@@ -328,8 +322,6 @@ def cullFile():
     fout = open(LOGFILE, "w", encoding="utf-8")
     fout.writelines(data_list)
     fout.close()
-
-
 
 
 def shouldCull(last_cull):
