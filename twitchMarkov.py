@@ -31,9 +31,10 @@ LOGFILE = "/uninitialized.txt"
 
 def Authed_User(Username):
     '''
-    input: A lowercase string
-    output: True or False
-    Use Checks if a username can use commands
+    Input: A lowercase string containing the username:
+    Output: A Boolean (True Or False)
+    Use: This Alllows you to check if a user is allowed to use basic bot commands
+    Returns: True if Authorised User, Else False
     '''
     if Username == Conf.owner:
         return True
@@ -45,11 +46,13 @@ def Authed_User(Username):
         return True 
     else:
         return False
+    return False
 def Super_User(Username):
     '''
-    input: A lowercase string
-    output: True or False
-    Use Checks if a username can user super commands (Wipe and Kill)
+    Input: A lowercase string containing the username:
+    Output: A Boolean (True Or False)
+    Use: This Alllows you to check if a user is allowed to use SuperUser Commands (Wipe and Kill)
+    Returns: True if Authorised User, Else False
     '''
     
     if Username == Conf.owner:
@@ -60,14 +63,39 @@ def Super_User(Username):
         return True
     else:
         return False
+    return False
+
 
 def isUserIgnored(username):
-    if (username in Conf.ignoredUsers):
+    '''
+    Input: A lowercase string containing the username: 
+    Output: A Boolean (True Or False)
+    Use: Checks if a message from this user should be ignored, Must use for Bot accounts.
+    Returns: True if Ignored User, Else False
+    '''
+    if username in Conf.ignoredUsers:
         return True
+    elif username in Global_Banned.Global_Banned_Users:
+        return True
+    elif username == Conf.nickname:
+        return True
+    elif username == Conf.channel:
+        return True
+    else:
+        return False
     return False
+
 def checkBlacklisted(message):
-    # Check words that the bot should NEVER learn.
+    '''
+    Input: A Message in any case
+    Output: A Boolean (True Or False)
+    Use: Checks if message contains banned words
+    Returns: True if banned words, Else False 
+    '''
     for i in Conf.blacklisted_words:
+        if re.search(r"\b" + i, message, re.IGNORECASE):
+            return True
+    for i in Global_Banned.Global_Banned_Words:
         if re.search(r"\b" + i, message, re.IGNORECASE):
             return True
     return False
