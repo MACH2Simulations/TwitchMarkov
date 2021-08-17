@@ -1,10 +1,10 @@
 from conf import Conf
 from emoji import demojize
 import sys
-sys.path.append(Conf.Global_Banned_Path)
+sys.path.append(Conf.GlobalConf)
 from Global_Banned_Conf import Global_Banned
-sys.path.append(Conf.Global_Authed_Path)
 from Global_Authed_Users import Global_Authed_Users
+sys.path.append(Conf.logdir)
 import datetime
 import socket
 import markovify
@@ -39,7 +39,7 @@ def SysPrint():
     Connection Information,used to know which channel each windows is connected to
     As: Conncted | BotName | Channel Name @BotName LogDIR
     '''
-    print("Connected", "|", Conf.nickname,"|", Conf.channel, Conf.nickname2)
+    print("Connected", "|", Conf.nickname,"|", Conf.channel, Conf.nickname2, Conf.logdir)
 
 
 def Authed_User(Username):
@@ -190,16 +190,18 @@ def writeMessage(message):
     global LOGFILE
     message = filterMessage(message)
     # if message != None and message != "":  ## Linter is shouting at me
-    if message.len() > 1:
-        if messageCount == 0 and CLEAR_LOGS_AFTER:
-            f = open(LOGFILE, "w", encoding="utf-8")
-        else:
-            f = open(LOGFILE, "a", encoding="utf-8")
-        f.write(message + "\n")
-        f.close()
-        return True
-    return False
-
+    try: 
+        if len(message) > 1:
+            if messageCount == 0 and CLEAR_LOGS_AFTER:
+                f = open(LOGFILE, "w", encoding="utf-8")
+            else:
+                f = open(LOGFILE, "a", encoding="utf-8")
+                f.write(message + "\n")
+                f.close()
+                return True
+            return False
+    except TypeError:
+        return None 
 
 def generateMessage():
     global LOGFILE
@@ -328,9 +330,6 @@ def handleAdminMessage(username, channel, sock):
     return False
 
 
-
-
-
 def cullFile():
     fin = open(LOGFILE, "r", encoding="utf-8")
     data_list = fin.readlines()
@@ -345,8 +344,6 @@ def cullFile():
     fout = open(LOGFILE, "w", encoding="utf-8")
     fout.writelines(data_list)
     fout.close()
-
-
 
 
 def shouldCull(last_cull):

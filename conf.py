@@ -17,7 +17,7 @@ class Conf():
         emote = ""
         # Add mods who can use commands, lowercase.
         # Use Double quotes
-        Global_Authed_Path = '/' #Path To Globally Authed users, usefull for mass deployment 
+        GlobalConf = '/'   ##Path To Global Banned Users/Words and Global User --- Used for bulk deployment 
         Allows_Global_Auth = True #Should Global Authed Users be able to contorl Bot
         mods = [
             "mach2simulations"
@@ -34,7 +34,7 @@ class Conf():
         # Add users to ignore, lowercase. #### See ./GlobalBotIgnored : for mass deployment change Global_Banned_Conf 
         
         
-        Global_Banned_Path = '/'   ##Path To Global Banned Users/Words --- Used for bulk deployment 
+        
         ignoredUsers = [
         "nightbot", "streamlabs", nickname
         ]
