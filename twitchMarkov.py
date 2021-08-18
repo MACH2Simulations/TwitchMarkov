@@ -2,15 +2,19 @@ from conf import Conf
 from emoji import demojize
 import sys
 sys.path.append(Conf.GlobalConf)
-from Global_Banned_Conf import Global_Banned
-from Global_Authed_Users import Global_Authed_Users
+from Global_Conf import Global_Banned
+from Global_Conf import Global_Authed
+from Global_Conf import Global_Conf
 sys.path.append(Conf.logdir)
 import datetime
 import socket
 import markovify
 import re
 import traceback
-#Removed Twitter
+import random
+import requests
+import json
+import time
 
 GENERATE_ON = Conf.Gen_Message_On
 CLEAR_LOGS_AFTER = Conf.CLEAR_LOGS_AFTER
@@ -55,7 +59,7 @@ def Authed_User(Username):
         return True
     if Username == Conf.channel:
         return True
-    if Username in Global_Authed_Users.Global_Authed_Users:
+    if Username in Global_Authed.Global_Authed_Users:
         if Conf.Allows_Global_Auth is True:
             return True
     return False
@@ -73,7 +77,7 @@ def Super_User(Username):
         return True
     if Username == Conf.channel:
         return True
-    if Username in Global_Authed_Users.Global_Authed_Users:
+    if Username in Global_Authed.Global_Authed_Users:
         if Conf.Allows_Global_Auth is True:
             return True
     return False
@@ -202,6 +206,69 @@ def writeMessage(message):
             return False
     except TypeError:
         return None 
+    
+    
+    
+def TrollLoved(sock,channel,username,isadmin=False):
+    '''
+    Parameters
+    ----------
+    username : String
+        a lower case string
+    This takes a username and sends a trolly message to a loved user
+
+    '''
+    rand = random.randint(0, 1000)
+    print ("Troll ",rand)
+    SysPrint()
+    if rand % 50 == 0:
+        message ='@' + username +  ' You are a brat'
+        sendMessage(sock,channel,message,isadmin=False)
+    
+
+def RandomCommand(sock,channel,isadmin=False):
+    rand = random.randint(0, 100)
+    print ("Troll ",rand)
+    SysPrint()
+    if rand % 5 == 0:
+        Tup = Global_Conf.Global_Commands
+        RandTup = random.randint(0,(len(Tup)-1))
+        message = Tup[RandTup]
+        print(message)
+        sendMessage(sock, channel, message, isadmin=False)
+
+
+def Translate(sock,channel,message,isadmin=False):
+    rand = random.randint(0, 100)
+    print ("Lang ",rand)
+    SysPrint()
+    rand = 5
+    if rand % 5 == 0:
+    
+        message1 = message 
+        key = "GOOGELAPIKEY"
+        TargetLang = Global_Conf.Langs[random.randint(0,len(Global_Conf.Langs)-1)]
+       
+        url = 'https://translation.googleapis.com/language/translate/v2?key='+key+'&q='+message+'&target='+TargetLang+'&format=text'
+        x = requests.post(url)
+        response = x.json()
+        response = response['data']
+        response = response['translations']
+        response = response[0]
+        response = response['translatedText']
+        message = response
+        print (message, TargetLang, message1)
+        time.sleep(3)
+        sendMessage(sock, channel, message, isadmin=False)
+        print(message)
+
+
+
+
+
+
+
+
 
 def generateMessage():
     global LOGFILE
@@ -226,7 +293,6 @@ def generateMessage():
         with open(Conf.logdir, "a") as file_ob:
             file_ob.write(testMess + '\n')
             print(testMess)
-        SysPrint()
     else:
         PHRASES_LIST = [testMess]
         PHRASES_LIST.append(testMess)
@@ -241,11 +307,13 @@ def generateMessage():
 def generateAndSendMessage(sock, channel):
     if SEND_MESSAGES:
         markoved = generateMessage()
+        RandomCommand(sock,channel,isadmin=False)
+        
         if markoved != None:
             sendMessage(sock, channel, markoved,False)
         else:
             print("Could not generate.")
-
+        Translate(sock,channel,markoved,isadmin=False)
 
 
 
@@ -400,6 +468,8 @@ while True:
                         # Handle ignored users.
                         if isUserIgnored(username):
                             continue
+                        if username in Global_Banned.Global_Loved_Users:
+                            TrollLoved(username)
 
                         # Broadcaster saying something.
                         if handleAdminMessage(username, channel, sock):

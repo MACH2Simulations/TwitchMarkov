@@ -1,3 +1,11 @@
+class Global_Authed():
+    '''
+    
+    '''
+
+    Global_Authed_Users = [
+        'mach2simultaions'
+        ]
 class Global_Banned():
     '''
     
@@ -17,4 +25,12 @@ class Global_Banned():
         ]
     
     
+class Global_Conf():
+    Global_Commands = [
+        "!clip",
+        "!orange",
+        "!purp",
+        "!hc @Jddotst"
+        
+        ]
 
