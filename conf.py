@@ -67,7 +67,7 @@ class Conf():
         CULL_OVER = 12000 #How many chat messages should the bot save: Def 12000
         TIMES_TO_TRY = 1000 #How many times should the bot try to make a message 
         PERCENT_UNIQUE_TO_SAVE = 100 #How Much should bot remeber it has said
-        STATE_SIZE = 4 # An integer, indicating the number of words in the model's state. ----- i don;t know what this means 2 WORKS Well, trying 4 to see what happens
+        STATE_SIZE = 2 # An integer, indicating the number of words in the model's state. ----- i don;t know what this means 2 WORKS Well, trying 4 to see what happens
         
  
         
